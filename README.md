@@ -72,4 +72,4 @@ cd prompt-galaxy
 ### 4. View the App!
 Navigate to `http://localhost:5173` in your web browser. 
 
-*(To access the Admin panel to add your own prompts, navigate to `http://localhost:5173/admin`)*.
+*(To access the Admin panel to add your own prompts, navigate to `http://localhost:5173/admin`)*
