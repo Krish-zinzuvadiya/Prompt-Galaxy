@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import { Analytics } from '@vercel/analytics/react';
 import Home from './pages/Home';
 import Admin from './pages/Admin';
 
@@ -55,6 +56,8 @@ function App() {
         <footer className="footer">
           MADE WITH ❤️ BY KRISH
         </footer>
+
+        <Analytics />
       </div>
     </Router>
   );
