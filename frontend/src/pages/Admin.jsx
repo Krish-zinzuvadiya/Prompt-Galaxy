@@ -14,6 +14,20 @@ const Admin = () => {
   });
   const [status, setStatus] = useState('idle');
 
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [credentials, setCredentials] = useState({ username: '', password: '' });
+  const [loginError, setLoginError] = useState(false);
+
+  const handleLogin = (e) => {
+    e.preventDefault();
+    if (credentials.username === 'krish' && credentials.password === '1234') {
+      setIsAuthenticated(true);
+      setLoginError(false);
+    } else {
+      setLoginError(true);
+    }
+  };
+
   const fetchPrompts = async () => {
     try {
       const res = await axios.get(API_URL);
@@ -78,6 +92,40 @@ const Admin = () => {
       setStatus('error');
     }
   };
+
+  if (!isAuthenticated) {
+    return (
+      <div className="admin-page" style={{ minHeight: '50vh', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+        <div className="admin-container" style={{ margin: '0 auto', width: '100%', maxWidth: '400px' }}>
+          <h2 className="page-title" style={{ fontSize: '2rem', textAlign: 'center', marginBottom: '2rem' }}>
+            ADMIN LOGIN
+          </h2>
+          <form className="admin-form" onSubmit={handleLogin}>
+            <div className="form-group">
+              <label>Username</label>
+              <input 
+                type="text" 
+                value={credentials.username}
+                onChange={(e) => setCredentials({ ...credentials, username: e.target.value })}
+                required 
+              />
+            </div>
+            <div className="form-group">
+              <label>Password</label>
+              <input 
+                type="password" 
+                value={credentials.password}
+                onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
+                required 
+              />
+            </div>
+            <button type="submit" className="btn-submit">LOGIN</button>
+            {loginError && <div style={{ color: '#F97576', marginTop: '1.5rem', fontWeight: 900, textAlign: 'center' }}>INVALID CREDENTIALS</div>}
+          </form>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="admin-page">
