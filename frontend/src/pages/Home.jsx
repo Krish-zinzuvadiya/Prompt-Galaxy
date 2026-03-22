@@ -7,6 +7,7 @@ const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/promp
 const Home = ({ searchTerm = '' }) => {
   const [prompts, setPrompts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeFilter, setActiveFilter] = useState('ALL');
 
   useEffect(() => {
     const fetchPrompts = async () => {
@@ -32,11 +33,15 @@ const Home = ({ searchTerm = '' }) => {
       </div>
       
       <div className="filters-bar">
-        <button className="filter-tag active">ALL</button>
-        <button className="filter-tag">PROFILE / AVATAR</button>
-        <button className="filter-tag">SOCIAL MEDIA POST</button>
-        <button className="filter-tag">INFOGRAPHIC</button>
-        <button className="filter-tag">POSTER / FLYER</button>
+        {['ALL', 'PROFILE / AVATAR', 'SOCIAL MEDIA POST', 'INFOGRAPHIC', 'POSTER / FLYER'].map(filter => (
+          <button 
+            key={filter}
+            className={`filter-tag ${activeFilter === filter ? 'active' : ''}`}
+            onClick={() => setActiveFilter(filter)}
+          >
+            {filter}
+          </button>
+        ))}
       </div>
 
       {loading ? (
@@ -45,10 +50,11 @@ const Home = ({ searchTerm = '' }) => {
         </div>
       ) : (
         <div className="masonry-grid">
-          {prompts.filter(p => 
-            p.title.toLowerCase().includes(searchTerm.toLowerCase()) || 
-            p.content.toLowerCase().includes(searchTerm.toLowerCase())
-          ).map((prompt) => (
+          {prompts.filter(p => {
+            const matchesSearch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) || p.content.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesFilter = activeFilter === 'ALL' || p.promptType === activeFilter;
+            return matchesSearch && matchesFilter;
+          }).map((prompt) => (
             <div key={prompt._id} className="masonry-item">
               <PromptCard prompt={prompt} />
             </div>

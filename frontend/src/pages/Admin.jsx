@@ -10,7 +10,8 @@ const Admin = () => {
     title: '',
     content: '',
     imageUrl: '',
-    platform: 'ChatGPT'
+    platform: 'ChatGPT',
+    promptType: 'PROFILE / AVATAR'
   });
   const [status, setStatus] = useState('idle');
 
@@ -51,7 +52,8 @@ const Admin = () => {
       title: prompt.title,
       content: prompt.content,
       imageUrl: prompt.imageUrl,
-      platform: prompt.platform
+      platform: prompt.platform,
+      promptType: prompt.promptType || 'PROFILE / AVATAR'
     });
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
@@ -69,7 +71,7 @@ const Admin = () => {
 
   const handleCancel = () => {
     setEditingId(null);
-    setFormData({ title: '', content: '', imageUrl: '', platform: 'ChatGPT' });
+    setFormData({ title: '', content: '', imageUrl: '', platform: 'ChatGPT', promptType: 'PROFILE / AVATAR' });
     setStatus('idle');
   };
 
@@ -83,7 +85,7 @@ const Admin = () => {
         await axios.post(API_URL, formData);
       }
       setStatus('success');
-      setFormData({ title: '', content: '', imageUrl: '', platform: 'ChatGPT' });
+      setFormData({ title: '', content: '', imageUrl: '', platform: 'ChatGPT', promptType: 'PROFILE / AVATAR' });
       setEditingId(null);
       fetchPrompts();
       setTimeout(() => setStatus('idle'), 3000);
@@ -157,6 +159,16 @@ const Admin = () => {
               placeholder="HTTPS://..."
               required 
             />
+          </div>
+
+          <div className="form-group">
+            <label>Prompt Category</label>
+            <select name="promptType" value={formData.promptType} onChange={handleChange}>
+              <option value="PROFILE / AVATAR">PROFILE / AVATAR</option>
+              <option value="SOCIAL MEDIA POST">SOCIAL MEDIA POST</option>
+              <option value="INFOGRAPHIC">INFOGRAPHIC</option>
+              <option value="POSTER / FLYER">POSTER / FLYER</option>
+            </select>
           </div>
 
           <div className="form-group">
