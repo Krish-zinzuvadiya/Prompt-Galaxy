@@ -37,10 +37,47 @@ body {
 /* Navbar */
 .navbar {
   display: flex;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 1rem;
   align-items: center;
   max-width: 1400px;
   margin: 0 auto;
+}
+
+@media (min-width: 768px) {
+  .navbar {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+}
+
+.search-container {
+  width: 100%;
+  max-width: 500px;
+}
+
+@media (min-width: 768px) {
+  .search-container {
+    flex: 1;
+    margin: 0 2rem;
+  }
+}
+
+.search-input {
+  width: 100%;
+  padding: 0.75rem 1rem;
+  border: 3px solid var(--black);
+  box-shadow: 2px 2px 0px 0px var(--black);
+  font-family: inherit;
+  font-weight: 900;
+  font-size: 1rem;
+  outline: none;
+  transition: transform 0.1s, box-shadow 0.1s;
+}
+
+.search-input:focus {
+  transform: translate(-2px, -2px);
+  box-shadow: 4px 4px 0px 0px var(--black);
 }
 
 .brand {

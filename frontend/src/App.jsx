@@ -19,25 +19,13 @@ function App() {
               </div>
             </Link>
 
-            <div className="search-container" style={{ flex: 1, margin: '0 2rem', maxWidth: '500px' }}>
+            <div className="search-container">
               <input 
                 type="text" 
                 placeholder="SEARCH PROMPTS..." 
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                style={{
-                  width: '100%',
-                  padding: '0.75rem 1rem',
-                  border: '3px solid #000',
-                  boxShadow: '2px 2px 0px 0px #000',
-                  fontFamily: 'inherit',
-                  fontWeight: 900,
-                  fontSize: '1rem',
-                  outline: 'none',
-                  transition: 'transform 0.1s, box-shadow 0.1s'
-                }}
-                onFocus={(e) => { e.target.style.transform = 'translate(-2px, -2px)'; e.target.style.boxShadow = '4px 4px 0px 0px #000'; }}
-                onBlur={(e) => { e.target.style.transform = 'translate(0px, 0px)'; e.target.style.boxShadow = '2px 2px 0px 0px #000'; }}
+                className="search-input"
               />
             </div>
             <div className="nav-buttons">
