@@ -72,9 +72,4 @@ cd prompt-galaxy
 ### 4. View the App!
 Navigate to `http://localhost:5173` in your web browser. 
 
-*(To access the Admin panel to add your own prompts, navigate to `http://localhost:5173/admin` and use the built-in credentials: Username `krish`, Password `1234`)*.
-
----
-
-## ❤️ Credits
-Proudly built and designed by **Krish**.
+*(To access the Admin panel to add your own prompts, navigate to `http://localhost:5173/admin`)*.
