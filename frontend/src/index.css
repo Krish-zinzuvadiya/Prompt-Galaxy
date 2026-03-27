@@ -270,6 +270,7 @@ body {
   font-weight: 900;
   text-transform: uppercase;
   cursor: pointer;
+  margin-top: auto;
 }
 .card-footer-btn:hover {
   background: #333;
