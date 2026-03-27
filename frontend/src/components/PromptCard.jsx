@@ -38,7 +38,13 @@ const PromptCard = ({ prompt }) => {
       <h3 className="card-title">{prompt.title}</h3>
       
       <div className="card-image-wrap">
-        <img src={prompt.imageUrl} alt={prompt.title} className="card-image" loading="lazy" />
+        <img
+          src={prompt.imageUrl}
+          alt={prompt.title}
+          className="card-image"
+          loading="lazy"
+          style={{ objectPosition: `${prompt.imagePositionX ?? 50}% ${prompt.imagePositionY ?? 50}%` }}
+        />
       </div>
       
       <div className="card-content">

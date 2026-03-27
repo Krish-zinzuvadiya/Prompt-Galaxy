@@ -10,6 +10,8 @@ const Admin = () => {
     title: '',
     content: '',
     imageUrl: '',
+    imagePositionX: 50,
+    imagePositionY: 50,
     platform: 'ChatGPT',
     promptType: 'PROFILE / AVATAR'
   });
@@ -94,6 +96,8 @@ const Admin = () => {
       title: prompt.title,
       content: prompt.content,
       imageUrl: prompt.imageUrl,
+      imagePositionX: prompt.imagePositionX ?? 50,
+      imagePositionY: prompt.imagePositionY ?? 50,
       platform: prompt.platform,
       promptType: prompt.promptType || 'PROFILE / AVATAR'
     });
@@ -120,7 +124,7 @@ const Admin = () => {
 
   const handleCancel = () => {
     setEditingId(null);
-    setFormData({ title: '', content: '', imageUrl: '', platform: 'ChatGPT', promptType: 'PROFILE / AVATAR' });
+    setFormData({ title: '', content: '', imageUrl: '', imagePositionX: 50, imagePositionY: 50, platform: 'ChatGPT', promptType: 'PROFILE / AVATAR' });
     setStatus('idle');
     setImageSource('url');
     setImagePreview('');
@@ -146,7 +150,7 @@ const Admin = () => {
         await axios.post(API_URL, formData);
       }
       setStatus('success');
-      setFormData({ title: '', content: '', imageUrl: '', platform: 'ChatGPT', promptType: 'PROFILE / AVATAR' });
+      setFormData({ title: '', content: '', imageUrl: '', imagePositionX: 50, imagePositionY: 50, platform: 'ChatGPT', promptType: 'PROFILE / AVATAR' });
       setEditingId(null);
       setImageSource('url');
       setImagePreview('');
@@ -279,24 +283,54 @@ const Admin = () => {
             )}
 
             {imagePreview && (
-              <div className="image-preview">
-                <img
-                  src={imagePreview}
-                  alt="Preview"
-                  onError={() => { if (imageSource === 'url') setImagePreview(''); }}
-                />
-                <button
-                  type="button"
-                  className="preview-remove"
-                  onClick={() => {
-                    setFormData(prev => ({ ...prev, imageUrl: '' }));
-                    setImagePreview('');
-                    if (fileInputRef.current) fileInputRef.current.value = '';
-                  }}
-                  title="Remove image"
-                >
-                  ✕
-                </button>
+              <div className="position-editor">
+                <label style={{ display: 'block', fontWeight: 900, textTransform: 'uppercase', marginBottom: '0.5rem', fontSize: '0.8rem' }}>
+                  📐 ADJUST IMAGE POSITION
+                </label>
+                <div className="position-preview-card">
+                  <img
+                    src={imagePreview}
+                    alt="Preview"
+                    style={{ objectPosition: `${formData.imagePositionX}% ${formData.imagePositionY}%` }}
+                    onError={() => { if (imageSource === 'url') setImagePreview(''); }}
+                  />
+                  <button
+                    type="button"
+                    className="preview-remove"
+                    onClick={() => {
+                      setFormData(prev => ({ ...prev, imageUrl: '', imagePositionX: 50, imagePositionY: 50 }));
+                      setImagePreview('');
+                      if (fileInputRef.current) fileInputRef.current.value = '';
+                    }}
+                    title="Remove image"
+                  >
+                    ✕
+                  </button>
+                </div>
+                <div className="position-sliders">
+                  <div className="slider-group">
+                    <span>← LEFT / RIGHT →</span>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={formData.imagePositionX}
+                      onChange={(e) => setFormData(prev => ({ ...prev, imagePositionX: Number(e.target.value) }))}
+                    />
+                    <span className="slider-value">{formData.imagePositionX}%</span>
+                  </div>
+                  <div className="slider-group">
+                    <span>↑ UP / DOWN ↓</span>
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={formData.imagePositionY}
+                      onChange={(e) => setFormData(prev => ({ ...prev, imagePositionY: Number(e.target.value) }))}
+                    />
+                    <span className="slider-value">{formData.imagePositionY}%</span>
+                  </div>
+                </div>
               </div>
             )}
           </div>
@@ -306,8 +340,11 @@ const Admin = () => {
             <select name="promptType" value={formData.promptType} onChange={handleChange}>
               <option value="PROFILE / AVATAR">PROFILE / AVATAR</option>
               <option value="SOCIAL MEDIA POST">SOCIAL MEDIA POST</option>
+              <option value="WEDDING">WEDDING</option>
               <option value="INFOGRAPHIC">INFOGRAPHIC</option>
               <option value="POSTER / FLYER">POSTER / FLYER</option>
+              <option value="LOGO / BRANDING">LOGO / BRANDING</option>
+              <option value="PRODUCT / MOCKUP">PRODUCT / MOCKUP</option>
             </select>
           </div>
 

@@ -4,6 +4,8 @@ const promptSchema = new mongoose.Schema({
   title: { type: String, required: true },
   content: { type: String, required: true },
   imageUrl: { type: String, required: true },
+  imagePositionX: { type: Number, default: 50 },
+  imagePositionY: { type: Number, default: 50 },
   platform: { type: String, required: true },
   promptType: { type: String, default: 'ALL' },
   createdAt: { type: Date, default: Date.now }

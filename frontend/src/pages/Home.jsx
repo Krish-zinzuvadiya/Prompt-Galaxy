@@ -33,7 +33,7 @@ const Home = ({ searchTerm = '' }) => {
       </div>
       
       <div className="filters-bar">
-        {['ALL', 'PROFILE / AVATAR', 'SOCIAL MEDIA POST', 'INFOGRAPHIC', 'POSTER / FLYER'].map(filter => (
+        {['ALL', 'PROFILE / AVATAR', 'SOCIAL MEDIA POST', 'WEDDING', 'INFOGRAPHIC', 'POSTER / FLYER', 'LOGO / BRANDING', 'PRODUCT / MOCKUP'].map(filter => (
           <button 
             key={filter}
             className={`filter-tag ${activeFilter === filter ? 'active' : ''}`}

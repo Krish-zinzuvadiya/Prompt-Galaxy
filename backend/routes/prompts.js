@@ -14,8 +14,8 @@ router.get('/', async (req, res) => {
 // POST new prompt
 router.post('/', async (req, res) => {
   try {
-    const { title, content, imageUrl, platform, promptType } = req.body;
-    const newPrompt = new Prompt({ title, content, imageUrl, platform, promptType });
+    const { title, content, imageUrl, imagePositionX, imagePositionY, platform, promptType } = req.body;
+    const newPrompt = new Prompt({ title, content, imageUrl, imagePositionX, imagePositionY, platform, promptType });
     const savedPrompt = await newPrompt.save();
     res.status(201).json(savedPrompt);
   } catch (err) {
@@ -26,10 +26,10 @@ router.post('/', async (req, res) => {
 // PUT update prompt
 router.put('/:id', async (req, res) => {
   try {
-    const { title, content, imageUrl, platform, promptType } = req.body;
+    const { title, content, imageUrl, imagePositionX, imagePositionY, platform, promptType } = req.body;
     const updatedPrompt = await Prompt.findByIdAndUpdate(
       req.params.id,
-      { title, content, imageUrl, platform, promptType },
+      { title, content, imageUrl, imagePositionX, imagePositionY, platform, promptType },
       { new: true }
     );
     res.json(updatedPrompt);
