@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/prompts';
@@ -14,6 +14,10 @@ const Admin = () => {
     promptType: 'PROFILE / AVATAR'
   });
   const [status, setStatus] = useState('idle');
+  const [imageSource, setImageSource] = useState('url'); // 'url' or 'file'
+  const [imagePreview, setImagePreview] = useState('');
+  const [imageError, setImageError] = useState('');
+  const fileInputRef = useRef(null);
 
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [credentials, setCredentials] = useState({ username: '', password: '' });
@@ -44,6 +48,44 @@ const Admin = () => {
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
+    if (e.target.name === 'imageUrl' && imageSource === 'url') {
+      setImagePreview(e.target.value);
+      setImageError('');
+    }
+  };
+
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (!file.type.startsWith('image/')) {
+      setImageError('PLEASE SELECT A VALID IMAGE FILE');
+      return;
+    }
+
+    if (file.size > 10 * 1024 * 1024) {
+      setImageError('IMAGE MUST BE UNDER 10MB');
+      return;
+    }
+
+    setImageError('');
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      const base64 = reader.result;
+      setFormData(prev => ({ ...prev, imageUrl: base64 }));
+      setImagePreview(base64);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const handleImageSourceToggle = (source) => {
+    setImageSource(source);
+    setImageError('');
+    setFormData(prev => ({ ...prev, imageUrl: '' }));
+    setImagePreview('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleEdit = (prompt) => {
@@ -55,6 +97,13 @@ const Admin = () => {
       platform: prompt.platform,
       promptType: prompt.promptType || 'PROFILE / AVATAR'
     });
+    // Detect if stored image is a data URI or a URL
+    if (prompt.imageUrl && prompt.imageUrl.startsWith('data:')) {
+      setImageSource('file');
+    } else {
+      setImageSource('url');
+    }
+    setImagePreview(prompt.imageUrl || '');
     window.scrollTo({ top: 0, behavior: 'smooth' });
   };
 
@@ -73,10 +122,22 @@ const Admin = () => {
     setEditingId(null);
     setFormData({ title: '', content: '', imageUrl: '', platform: 'ChatGPT', promptType: 'PROFILE / AVATAR' });
     setStatus('idle');
+    setImageSource('url');
+    setImagePreview('');
+    setImageError('');
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    if (!formData.imageUrl) {
+      setImageError(imageSource === 'url' ? 'PLEASE ENTER AN IMAGE URL' : 'PLEASE UPLOAD AN IMAGE');
+      return;
+    }
+
     setStatus('submitting');
     try {
       if (editingId) {
@@ -87,6 +148,12 @@ const Admin = () => {
       setStatus('success');
       setFormData({ title: '', content: '', imageUrl: '', platform: 'ChatGPT', promptType: 'PROFILE / AVATAR' });
       setEditingId(null);
+      setImageSource('url');
+      setImagePreview('');
+      setImageError('');
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
       fetchPrompts();
       setTimeout(() => setStatus('idle'), 3000);
     } catch (err) {
@@ -150,15 +217,88 @@ const Admin = () => {
           </div>
 
           <div className="form-group">
-            <label>Image URL</label>
-            <input 
-              type="url" 
-              name="imageUrl" 
-              value={formData.imageUrl} 
-              onChange={handleChange} 
-              placeholder="HTTPS://..."
-              required 
-            />
+            <label>Image</label>
+            <div className="image-source-toggle">
+              <button
+                type="button"
+                className={`toggle-btn ${imageSource === 'url' ? 'active' : ''}`}
+                onClick={() => handleImageSourceToggle('url')}
+              >
+                🔗 URL
+              </button>
+              <button
+                type="button"
+                className={`toggle-btn ${imageSource === 'file' ? 'active' : ''}`}
+                onClick={() => handleImageSourceToggle('file')}
+              >
+                📁 UPLOAD FILE
+              </button>
+            </div>
+
+            {imageSource === 'url' ? (
+              <input 
+                type="url" 
+                name="imageUrl" 
+                value={formData.imageUrl} 
+                onChange={handleChange} 
+                placeholder="HTTPS://..."
+              />
+            ) : (
+              <div
+                className="file-upload-zone"
+                onClick={() => fileInputRef.current?.click()}
+                onDragOver={(e) => { e.preventDefault(); e.currentTarget.classList.add('dragover'); }}
+                onDragLeave={(e) => { e.currentTarget.classList.remove('dragover'); }}
+                onDrop={(e) => {
+                  e.preventDefault();
+                  e.currentTarget.classList.remove('dragover');
+                  const file = e.dataTransfer.files[0];
+                  if (file) {
+                    fileInputRef.current.files = e.dataTransfer.files;
+                    handleFileChange({ target: { files: [file] } });
+                  }
+                }}
+              >
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  style={{ display: 'none' }}
+                />
+                <div className="upload-icon">⬆️</div>
+                <p className="upload-text">CLICK OR DRAG & DROP IMAGE HERE</p>
+                <p className="upload-hint">PNG, JPG, WEBP — MAX 10MB</p>
+              </div>
+            )}
+
+            {imageError && (
+              <div style={{ color: '#F97576', marginTop: '0.5rem', fontWeight: 900, fontSize: '0.875rem' }}>
+                {imageError}
+              </div>
+            )}
+
+            {imagePreview && (
+              <div className="image-preview">
+                <img
+                  src={imagePreview}
+                  alt="Preview"
+                  onError={() => { if (imageSource === 'url') setImagePreview(''); }}
+                />
+                <button
+                  type="button"
+                  className="preview-remove"
+                  onClick={() => {
+                    setFormData(prev => ({ ...prev, imageUrl: '' }));
+                    setImagePreview('');
+                    if (fileInputRef.current) fileInputRef.current.value = '';
+                  }}
+                  title="Remove image"
+                >
+                  ✕
+                </button>
+              </div>
+            )}
           </div>
 
           <div className="form-group">
