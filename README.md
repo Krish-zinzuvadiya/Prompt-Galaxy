@@ -1,6 +1,3 @@
-
-
-
 # 〰 Prompt Galaxy
 
 A high-fidelity, visually stunning AI Prompt library built with the **MERN stack** (MongoDB, Express, React, Node.js) featuring a powerful **Neo-Brutalism** design system.
