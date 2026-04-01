@@ -696,7 +696,7 @@ body {
   height: 100%;
   background: var(--yellow);
   width: 100%;
-  animation: toast-progress 1s linear forwards;
+  animation: toast-progress 2s linear forwards;
 }
 
 @keyframes toast-progress {
