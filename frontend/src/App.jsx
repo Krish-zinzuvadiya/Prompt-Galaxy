@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
 import { Analytics } from '@vercel/analytics/react';
 import Home from './pages/Home';
 import Admin from './pages/Admin';
+import { Toaster } from 'react-hot-toast';
 
 import './index.css';
 
@@ -46,6 +47,7 @@ function App() {
         </footer>
 
         <Analytics />
+        <Toaster position="top-center" />
       </div>
     </Router>
   );

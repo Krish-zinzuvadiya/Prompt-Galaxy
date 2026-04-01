@@ -1,23 +1,50 @@
 import React from 'react';
+import { toast } from 'react-hot-toast';
 
 const PromptCard = ({ prompt }) => {
   const handleCopy = (e) => {
     e.stopPropagation();
     navigator.clipboard.writeText(prompt.content);
     
-    const platformStr = prompt.platform.toLowerCase();
-    if (platformStr.includes('chatgpt')) {
-      // Passes the prompt to ChatGPT. ChatGPT will place it in the box for the user!
-      window.open(`https://chatgpt.com/?q=${encodeURIComponent(prompt.content)}`, '_blank');
-    } else if (platformStr.includes('gemini')) {
-      alert('PROMPT COPIED! Gemini blocks direct pasting via link. Please press Ctrl+V to paste it manually!');
-      window.open('https://gemini.google.com/app', '_blank');
-    } else if (platformStr.includes('claude')) {
-      window.open(`https://claude.ai/new?q=${encodeURIComponent(prompt.content)}`, '_blank');
+    // Pick target AI randomly if not explicitly specified
+    let displayAi = prompt.platform;
+    if (!displayAi) {
+      const ais = ["ChatGPT", "Gemini", "Claude"];
+      displayAi = ais[Math.floor(Math.random() * ais.length)];
+    }
+
+    const platformStr = (prompt.platform || '').toLowerCase();
+    let redirectUrl = '';
+    
+    if (platformStr.includes('chatgpt') || displayAi === 'ChatGPT') {
+      redirectUrl = `https://chatgpt.com/?q=${encodeURIComponent(prompt.content)}`;
+    } else if (platformStr.includes('gemini') || displayAi === 'Gemini') {
+      redirectUrl = 'https://gemini.google.com/app';
+    } else if (platformStr.includes('claude') || displayAi === 'Claude') {
+      redirectUrl = `https://claude.ai/new?q=${encodeURIComponent(prompt.content)}`;
     } else if (platformStr.includes('midjourney')) {
-      alert('PROMPT COPIED! Paste this in your Discord Midjourney bot.');
+      redirectUrl = ''; // Midjourney has no direct web prompt injection
     } else {
-      alert('PROMPT COPIED! Ready to paste into the platform.');
+      redirectUrl = `https://chatgpt.com/?q=${encodeURIComponent(prompt.content)}`;
+    }
+
+    toast.custom(
+      (t) => (
+        <div className={`custom-toast ${t.visible ? 'animate-enter' : 'animate-leave'}`}>
+          <div className="toast-message">Redirecting to {displayAi}...</div>
+          <div className="toast-submessage">PROMPT COPIED TO CLIPBOARD!</div>
+          <div className="toast-progress-bg">
+            <div className="toast-progress-bar"></div>
+          </div>
+        </div>
+      ),
+      { duration: 1000 }
+    );
+
+    if (redirectUrl) {
+      setTimeout(() => {
+        window.open(redirectUrl, '_blank');
+      }, 1000);
     }
   };
 
