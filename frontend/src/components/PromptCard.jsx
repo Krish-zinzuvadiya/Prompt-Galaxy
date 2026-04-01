@@ -38,13 +38,13 @@ const PromptCard = ({ prompt }) => {
           </div>
         </div>
       ),
-      { duration: 2000 }
+      { duration: 1000 }
     );
 
     if (redirectUrl) {
       setTimeout(() => {
         window.open(redirectUrl, '_blank');
-      }, 2000);
+      }, 1000);
     }
   };
 
