@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import axios from 'axios';
+import PromptCard from '../components/PromptCard';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/prompts';
 
@@ -388,28 +389,30 @@ const Admin = () => {
             </div>
           )}
         </form>
+      </div> {/* End Admin Container */}
 
-        <div className="admin-list">
-          <h3 style={{ marginBottom: '1rem', fontWeight: 900 }}>EXISTING PROMPTS</h3>
-          {prompts.length === 0 ? (
-            <p>NO PROMPTS FOUND.</p>
-          ) : (
-            prompts.map(prompt => (
-              <div key={prompt._id} className="admin-prompt-item">
-                <div>
-                  <h4>{prompt.title}</h4>
-                  <p>{prompt.platform}</p>
+      {/* Advanced Admin List Grid below the form */}
+      <div className="container" style={{ marginTop: '2rem' }}>
+        <h3 style={{ marginBottom: '3rem', fontSize: '2.5rem', fontWeight: 900, textAlign: 'center', textTransform: 'uppercase', letterSpacing: '-0.02em', borderBottom: '4px solid var(--black)', paddingBottom: '1.5rem' }}>EXISTING PROMPTS</h3>
+        {prompts.length === 0 ? (
+          <p style={{ textAlign: 'center', fontWeight: 'bold' }}>NO PROMPTS FOUND.</p>
+        ) : (
+          <div className="masonry-grid">
+            {prompts.map(prompt => (
+              <div key={prompt._id} className="admin-card-wrapper">
+                <div className="admin-card-overlay-wrap" style={{ pointerEvents: 'none', flex: 1, display: 'flex', flexDirection: 'column' }}>
+                  <PromptCard prompt={prompt} />
                 </div>
                 <div className="admin-prompt-actions">
-                  <button onClick={() => handleEdit(prompt)} className="btn-edit">EDIT</button>
-                  <button onClick={() => handleDelete(prompt._id)} className="btn-delete">DELETE</button>
+                  <button onClick={() => handleEdit(prompt)} className="btn-edit" style={{ flex: 1, fontSize: '1.1rem' }}>EDIT</button>
+                  <button onClick={() => handleDelete(prompt._id)} className="btn-delete" style={{ flex: 1, fontSize: '1.1rem' }}>DELETE</button>
                 </div>
               </div>
-            ))
-          )}
-        </div>
-
+            ))}
+          </div>
+        )}
       </div>
+
     </div>
   );
 };
