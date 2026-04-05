@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import PromptCard from '../components/PromptCard';
-import PromptShowcase from '../components/PromptShowcase';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/prompts';
 
@@ -50,21 +49,21 @@ const Home = ({ searchTerm = '' }) => {
           LOADING...
         </div>
       ) : (
-        <div className="collection-view">
-          {prompts.length > 0 && (
-            <PromptShowcase 
-              trendingPrompts={prompts.filter(p => {
-                const matchesSearch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) || p.content.toLowerCase().includes(searchTerm.toLowerCase());
-                const matchesFilter = activeFilter === 'ALL' || p.promptType === activeFilter;
-                return matchesSearch && matchesFilter;
-              }).sort((a, b) => {
-                if (activeFilter === 'ALL') {
-                  return (b.isTrending ? 1 : 0) - (a.isTrending ? 1 : 0);
-                }
-                return 0;
-              })} 
-            />
-          )}
+        <div className="masonry-grid">
+          {prompts.filter(p => {
+            const matchesSearch = p.title.toLowerCase().includes(searchTerm.toLowerCase()) || p.content.toLowerCase().includes(searchTerm.toLowerCase());
+            const matchesFilter = activeFilter === 'ALL' || p.promptType === activeFilter;
+            return matchesSearch && matchesFilter;
+          }).sort((a, b) => {
+            if (activeFilter === 'ALL') {
+              return (b.isTrending ? 1 : 0) - (a.isTrending ? 1 : 0);
+            }
+            return 0; // maintain original order for other filters if needed, or we can sort all by trending
+          }).map((prompt) => (
+            <div key={prompt._id} className="masonry-item">
+              <PromptCard prompt={prompt} />
+            </div>
+          ))}
         </div>
       )}
     </div>

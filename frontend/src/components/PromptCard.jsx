@@ -20,6 +20,7 @@ const PromptCard = ({ prompt }) => {
     if (hasRated) return;
     setHasRated(true);
     
+    // Optimistic calculation
     const currentSum = prompt.ratings ? prompt.ratings.reduce((a, b) => a + b, 0) : 0;
     const currentCount = prompt.ratings ? prompt.ratings.length : 0;
     const newAvg = ((currentSum + star) / (currentCount + 1)).toFixed(1);
@@ -39,7 +40,7 @@ const PromptCard = ({ prompt }) => {
       try {
         await axios.post(`${API_URL}/view/${prompt._id}`);
       } catch(err) {
-        // ignore errors
+        // ignore errors for passive view logging
       }
     }
   };
