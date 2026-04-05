@@ -14,7 +14,8 @@ const Admin = () => {
     imagePositionX: 50,
     imagePositionY: 50,
     platform: 'ChatGPT',
-    promptType: 'PROFILE / AVATAR'
+    promptType: 'PROFILE / AVATAR',
+    isTrending: false
   });
   const [status, setStatus] = useState('idle');
   const [imageSource, setImageSource] = useState('url'); // 'url' or 'file'
@@ -50,9 +51,10 @@ const Admin = () => {
   }, []);
 
   const handleChange = (e) => {
-    setFormData({ ...formData, [e.target.name]: e.target.value });
+    const value = e.target.type === 'checkbox' ? e.target.checked : e.target.value;
+    setFormData({ ...formData, [e.target.name]: value });
     if (e.target.name === 'imageUrl' && imageSource === 'url') {
-      setImagePreview(e.target.value);
+      setImagePreview(value);
       setImageError('');
     }
   };
@@ -100,7 +102,8 @@ const Admin = () => {
       imagePositionX: prompt.imagePositionX ?? 50,
       imagePositionY: prompt.imagePositionY ?? 50,
       platform: prompt.platform,
-      promptType: prompt.promptType || 'PROFILE / AVATAR'
+      promptType: prompt.promptType || 'PROFILE / AVATAR',
+      isTrending: prompt.isTrending || false
     });
     // Detect if stored image is a data URI or a URL
     if (prompt.imageUrl && prompt.imageUrl.startsWith('data:')) {
@@ -125,7 +128,7 @@ const Admin = () => {
 
   const handleCancel = () => {
     setEditingId(null);
-    setFormData({ title: '', content: '', imageUrl: '', imagePositionX: 50, imagePositionY: 50, platform: 'ChatGPT', promptType: 'PROFILE / AVATAR' });
+    setFormData({ title: '', content: '', imageUrl: '', imagePositionX: 50, imagePositionY: 50, platform: 'ChatGPT', promptType: 'PROFILE / AVATAR', isTrending: false });
     setStatus('idle');
     setImageSource('url');
     setImagePreview('');
@@ -151,7 +154,7 @@ const Admin = () => {
         await axios.post(API_URL, formData);
       }
       setStatus('success');
-      setFormData({ title: '', content: '', imageUrl: '', imagePositionX: 50, imagePositionY: 50, platform: 'ChatGPT', promptType: 'PROFILE / AVATAR' });
+      setFormData({ title: '', content: '', imageUrl: '', imagePositionX: 50, imagePositionY: 50, platform: 'ChatGPT', promptType: 'PROFILE / AVATAR', isTrending: false });
       setEditingId(null);
       setImageSource('url');
       setImagePreview('');
@@ -361,6 +364,17 @@ const Admin = () => {
             </select>
           </div>
 
+          <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <label style={{ margin: 0 }}>Trending Item?</label>
+            <input
+              type="checkbox"
+              name="isTrending"
+              checked={formData.isTrending}
+              onChange={handleChange}
+              style={{ width: 'auto', marginBottom: 0 }}
+            />
+          </div>
+
           <div className="form-group">
             <label>Prompt Content</label>
             <textarea 
@@ -404,8 +418,13 @@ const Admin = () => {
                   <PromptCard prompt={prompt} />
                 </div>
                 <div className="admin-prompt-actions">
-                  <button onClick={() => handleEdit(prompt)} className="btn-edit" style={{ flex: 1, fontSize: '1.1rem' }}>EDIT</button>
-                  <button onClick={() => handleDelete(prompt._id)} className="btn-delete" style={{ flex: 1, fontSize: '1.1rem' }}>DELETE</button>
+                  <div style={{ padding: '0.5rem', fontWeight: 900, textAlign: 'center', backgroundColor: '#fff', borderBottom: '2px solid #000' }}>
+                    VIEWS: {prompt.views || 0}
+                  </div>
+                  <div style={{ display: 'flex', width: '100%' }}>
+                    <button onClick={() => handleEdit(prompt)} className="btn-edit" style={{ flex: 1, fontSize: '1.1rem' }}>EDIT</button>
+                    <button onClick={() => handleDelete(prompt._id)} className="btn-delete" style={{ flex: 1, fontSize: '1.1rem' }}>DELETE</button>
+                  </div>
                 </div>
               </div>
             ))}
