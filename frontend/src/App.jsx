@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import Admin from './pages/Admin';
 import { Toaster } from 'react-hot-toast';
 
+import { Instagram } from 'lucide-react';
 import { AnimatePresence, motion } from 'framer-motion';
 import Preloader from './components/Preloader';
 import './index.css';
@@ -66,8 +67,19 @@ function App() {
           </Routes>
         </main>
 
-        <footer className="footer">
-          MADE WITH ❤️ BY KRISH
+        <footer className="footer" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '1rem' }}>
+          <span>MADE WITH ❤️ BY KRISH</span>
+          <motion.a 
+            href="https://www.instagram.com/prompt_galaxy/" 
+            target="_blank" 
+            rel="noopener noreferrer"
+            className="ig-link"
+            style={{ width: '35px', height: '35px', marginRight: 0 }}
+            whileHover={{ scale: 1.1, rotate: -5 }}
+            whileTap={{ scale: 0.9 }}
+          >
+            <Instagram size={18} />
+          </motion.a>
         </footer>
 
         <Analytics />
