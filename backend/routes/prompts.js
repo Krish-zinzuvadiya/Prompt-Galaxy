@@ -62,22 +62,4 @@ router.post('/view/:id', async (req, res) => {
   }
 });
 
-// POST add rating
-router.post('/rating/:id', async (req, res) => {
-  try {
-    const { rating } = req.body;
-    if (rating < 1 || rating > 5) {
-      return res.status(400).json({ error: 'Rating must be between 1 and 5' });
-    }
-    const updatedPrompt = await Prompt.findByIdAndUpdate(
-      req.params.id,
-      { $push: { ratings: rating } },
-      { new: true }
-    );
-    res.json(updatedPrompt);
-  } catch (err) {
-    res.status(400).json({ error: err.message });
-  }
-});
-
 module.exports = router;

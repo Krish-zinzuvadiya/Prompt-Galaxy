@@ -10,7 +10,6 @@ const promptSchema = new mongoose.Schema({
   promptType: { type: String, default: 'ALL' },
   isTrending: { type: Boolean, default: false },
   views: { type: Number, default: 0 },
-  ratings: { type: [Number], default: [] },
   createdAt: { type: Date, default: Date.now }
 });
 

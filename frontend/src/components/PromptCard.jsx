@@ -5,34 +5,7 @@ import axios from 'axios';
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:5000/api/prompts';
 
 const PromptCard = ({ prompt }) => {
-  const [hasRated, setHasRated] = useState(false);
-  const [ratingVal, setRatingVal] = useState(() => {
-    if (prompt.ratings && prompt.ratings.length > 0) {
-      return (prompt.ratings.reduce((a, b) => a + b, 0) / prompt.ratings.length).toFixed(1);
-    }
-    return 0;
-  });
-  const [hoveredStar, setHoveredStar] = useState(0);
   const [hasViewed, setHasViewed] = useState(false);
-
-  const handleRate = async (e, star) => {
-    e.stopPropagation();
-    if (hasRated) return;
-    setHasRated(true);
-    
-    // Optimistic calculation
-    const currentSum = prompt.ratings ? prompt.ratings.reduce((a, b) => a + b, 0) : 0;
-    const currentCount = prompt.ratings ? prompt.ratings.length : 0;
-    const newAvg = ((currentSum + star) / (currentCount + 1)).toFixed(1);
-    setRatingVal(newAvg);
-    
-    try {
-      await axios.post(`${API_URL}/rating/${prompt._id}`, { rating: star });
-      toast.success('RATED SUCCESSFULLY!');
-    } catch(err) {
-      toast.error('FAILED TO SUBMIT RATING');
-    }
-  };
 
   const handleMouseEnter = async () => {
     if (!hasViewed) {
@@ -123,33 +96,6 @@ const PromptCard = ({ prompt }) => {
       
       <div className="card-content">
         {prompt.content}
-      </div>
-
-      <div className="rating-container" style={{ padding: '0.75rem 1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: '#FFFBEA', borderTop: '2px solid #000' }}>
-        <span style={{ fontWeight: 900, fontSize: '0.9rem' }}>
-          {ratingVal > 0 ? `★ ${ratingVal}` : 'NO RATINGS YET'}
-        </span>
-        <div style={{ display: 'flex', gap: '8px' }}>
-          {[1, 2, 3, 4, 5].map((star) => (
-            <span
-              key={star}
-              onClick={(e) => handleRate(e, star)}
-              onMouseEnter={() => !hasRated && setHoveredStar(star)}
-              onMouseLeave={() => !hasRated && setHoveredStar(0)}
-              style={{
-                cursor: hasRated ? 'default' : 'pointer',
-                color: (hoveredStar >= star || (!hoveredStar && Math.round(ratingVal) >= star)) ? '#FFB800' : '#CCC',
-                fontSize: '1.5rem',
-                lineHeight: 1,
-                textShadow: '1px 1px 0px #000',
-                transition: 'transform 0.1s',
-                transform: hoveredStar === star && !hasRated ? 'scale(1.2)' : 'scale(1)'
-              }}
-            >
-              ★
-            </span>
-          ))}
-        </div>
       </div>
 
       <div className="card-footer-btn" onClick={handleCopy} style={{ borderTop: '2px solid #000' }}>
