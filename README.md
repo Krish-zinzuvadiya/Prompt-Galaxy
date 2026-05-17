@@ -73,3 +73,4 @@ cd prompt-galaxy
 Navigate to `http://localhost:5173` in your web browser. 
 
 *(To access the Admin panel to add your own prompts, navigate to)*
+
